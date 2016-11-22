@@ -17,4 +17,6 @@ EC numbers to investigate with COBS:
 6. EC 3.2.1.41
 7. EC 3.2.1.86
 
+----
 
+For the shell loop, the input file must not contain "EC" just a list of the numbers themselves. 
