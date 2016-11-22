@@ -1,1 +1,1 @@
-while read line ;     do python scripts/nucl_from_ec.py $line > "$line".txt;    done < test.txt
+while read line ;     do python scripts/nucl_from_ec.py $line > "$line".txt;    done < ec_numbers.txt
