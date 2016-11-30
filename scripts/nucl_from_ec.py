@@ -16,10 +16,12 @@ efetch_handle = Entrez.efetch(db='nucleotide', id=entries['IdList'], rettype='gb
 records = Entrez.parse(efetch_handle)
 
 # Now, we go through the records and look for a feature with name 'EC_number'
+missing = []
 for record in records:
-    for feature in record['GBSeq_feature-table']:
-        for subfeature in feature['GBFeature_quals']:
-            if (subfeature['GBQualifier_name'] == 'EC_number' and
+  try:
+      for feature in record['GBSeq_feature-table']:
+          for subfeature in feature['GBFeature_quals']:
+              if (subfeature['GBQualifier_name'] == 'EC_number'   and
                 subfeature['GBQualifier_value'] == ec_num):
 
                     # If we found it, we extract the seq's start and end
@@ -42,6 +44,8 @@ for record in records:
 
                     print('>GenBank Accession:{}'.format(accession))
                     print(seq.seq)
-
+  except ValueError: ## if whatever you are trying to do did not go through
+        missing.append(records.id) ## write the stuff to list "missing"
+print missing
+#fp.write('\n'.join(missing))
 efetch_handle.close()
-

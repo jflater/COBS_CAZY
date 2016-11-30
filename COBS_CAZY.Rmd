@@ -1,0 +1,94 @@
+---
+title: "COBS_CAZY"
+output: html_notebook
+root: ../../../
+---
+![](images/COBSPIC.png)
+------
+#COBS: A Background
+------
+First, let's confirm that we have the required tools for asking questions of the NCBI database. To do this we will use the NCBI API: Entrez Direct and install it via the UNIX command line. 
+```{bash, eval=FALSE}
+pwd
+cd ~
+perl -MNet::FTP -e \
+  '$ftp = new Net::FTP("ftp.ncbi.nlm.nih.gov", Passive => 1);
+   $ftp->login; $ftp->binary;
+   $ftp->get("/entrez/entrezdirect/edirect.zip");'
+unzip -u -q edirect.zip
+rm edirect.zip
+export PATH=$PATH:$HOME/edirect
+./edirect/setup.sh
+```
+Let's take a look to confirm that it was installed in the home directory:
+```{bash}
+cd ~
+ls
+```
+Now that we have the tools, what will we use them for? COBS is a unique dataset that includes many metagenomes from soil aggregates. Many functions in ecosystems are microbially mediated and catalyzed by enzymes. In this study, funded by the DOE, we are interested in carnon cycleing and therefore the enyzmes associated with that funciton. Our collaborator (Kirsten Hofmockel) has identified a few enzymes of interest for our system. The list of enzymes is contained in a text file: ec_numbers.txt
+Let's navigate to that directory and take a look:
+```{bash}
+cd ~/Documents/COBS_CAZY
+cat ec_numbers.txt
+```
+We now have a list of enzymes of interest, let's use those NCBI tools to find bacterial sequences associated with those enzymes by creating a python script:  
+```{python, eval=FALSE}
+import sys
+from Bio import Entrez, SeqIO
+
+Entrez.email = 'jflater@iastate.edu'
+
+# First, find entries that contain the E.C. number
+ec_num = sys.argv[1].strip()
+#print ec_num
+#print 'E.C. '+ ec_num
+esearch_handle = Entrez.esearch(db='nucleotide', term='E.C. '+ec_num)
+entries = Entrez.read(esearch_handle)
+esearch_handle.close()
+
+# Second, fetch these entries
+efetch_handle = Entrez.efetch(db='nucleotide', id=entries['IdList'], rettype='gb', retmode='xml') 
+records = Entrez.parse(efetch_handle)
+
+# Now, we go through the records and look for a feature with name 'EC_number'
+missing = []
+for record in records:
+  try:
+      for feature in record['GBSeq_feature-table']:
+          for subfeature in feature['GBFeature_quals']:
+              if (subfeature['GBQualifier_name'] == 'EC_number'   and
+                subfeature['GBQualifier_value'] == ec_num):
+
+                    # If we found it, we extract the seq's start and end
+                    accession = record['GBSeq_primary-accession']
+                    interval = feature['GBFeature_intervals'][0]
+                    interval_start = interval['GBInterval_from']
+                    interval_end = interval['GBInterval_to']
+                    location = feature['GBFeature_location']
+                    if location.startswith('complement'):
+                        strand = 2
+                    else:
+                        strand = 1
+
+                    # Now we fetch the nucleotide sequence
+                    handle = Entrez.efetch(db="nucleotide", id=accession,
+                                           rettype="fasta", strand=strand,
+                                           seq_start = interval_start,
+                                           seq_stop = interval_end)
+                    seq = SeqIO.read(handle, "fasta")
+
+                    print('>GenBank Accession:{}'.format(accession))
+                    print(seq.seq)
+  except ValueError: ## if whatever you are trying to do did not go through
+        missing.append(records.id) ## write the stuff to list "missing"
+print missing
+#fp.write('\n'.join(missing))
+efetch_handle.close()
+```
+Now let's apply that script to our list of EC #'s by using the command line:
+```{bash, eval=FALSE}
+while read line;     
+  do python scripts/nucl_from_ec.py $line > "$line".txt;    
+  done < ec_numbers.txt
+```
+This command line script will go through our list of EC numbers and retrieve the associated nucleotide sequences and output a file for each EC # with those sequences in fasta format. 
