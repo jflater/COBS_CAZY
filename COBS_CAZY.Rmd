@@ -92,3 +92,66 @@ while read line;
   done < ec_numbers.txt
 ```
 This command line script will go through our list of EC numbers and retrieve the associated nucleotide sequences and output a file for each EC # with those sequences in fasta format. 
+____
+Python script wasn't working. So we are using downloaded protien sequences to blast against NCBI 
+Let's try an online server 
+mkdir temp_cazy
+_____
+To use hpcc:
+Lot's of disc space, temporary unlimited (3 months)
+
+ssh flaterj1@hpcc.msu.edu
+password:
+
+We are at the gateway, now connect to development node (dev-intell-16, it's newer)
+
+ssh dv-intell-16
+~ is home directory, only 50 g and Jin can't see it.
+cd /mnt/scratch/flaterj1
+empty big directory, temp unlimeted good for downloading big files for a short time
+now lets download db to that  ftp://ftp.ncbi.nlm.nih.gov
+refseq_protien.10.tar.gz.md5 and *.gz is what we want to put on HPCC
+
+In HPC: move out of dev intel...everyone is using it. There are many more computers to choose from begind that...called nodes
+We want to work in a node, we need to submit a job by using qsub
+```{bash, eval=FALSE}
+
+```
+
+[flaterj1@dev-intel16 ~]$ cd /mnt/scratch/flaterj1
+[flaterj1@dev-intel16 flaterj1]$ ls
+[flaterj1@dev-intel16 flaterj1]$ mkdir COBS_CAZY
+[flaterj1@dev-intel16 flaterj1]$ cd COBS_CAZY/
+[flaterj1@dev-intel16 COBS_CAZY]$ emacs download.refseq.qsub
+
+[1]+  Stopped                 emacs download.refseq.qsub
+[flaterj1@dev-intel16 COBS_CAZY]$ ls
+download.refseq.qsub  download.refseq.qsub~
+[flaterj1@dev-intel16 COBS_CAZY]$ rm *~
+[flaterj1@dev-intel16 COBS_CAZY]$ ls
+download.refseq.qsub
+[flaterj1@dev-intel16 COBS_CAZY]$ qsub download.refseq.qsub
+37523906.mgr-04.i
+[flaterj1@dev-intel16 COBS_CAZY]$ ls
+download.refseq.qsub
+[flaterj1@dev-intel16 COBS_CAZY]$
+
+.o is output, .e is error
+
+S = Q in line
+S = R running
+S = C complete
+
+Check if everything downloaded correctly by using md5(it tells us if downloaded correctly)
+Once all is downlaoded, unzip
+
+
+
+Then ready to run blastp (files in fasta) clone the github repository
+# note change spellin on protein for emacs
+
+module load git (to upload repository)
+git clone url
+once repository is uploaded then blastp
+
+
