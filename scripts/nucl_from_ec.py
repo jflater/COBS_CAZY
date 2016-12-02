@@ -5,9 +5,8 @@ Entrez.email = 'jflater@iastate.edu'
 
 # First, find entries that contain the E.C. number
 ec_num = sys.argv[1].strip()
-#print ec_num
-#print 'E.C. '+ ec_num
-esearch_handle = Entrez.esearch(db='nucleotide', term='EC '+ec_num)
+# Editing to only search for #, exclude "EC and E.C."
+esearch_handle = Entrez.esearch(db='nucleotide', term=ec_num)
 entries = Entrez.read(esearch_handle)
 esearch_handle.close()
 

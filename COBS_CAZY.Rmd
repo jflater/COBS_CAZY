@@ -6,6 +6,8 @@ root: ../../../
 ![](images/COBSPIC.png)
 ------
 #COBS: A Background
+
+COBS is a field trial comparing biofuel systems
 ------
 First, let's confirm that we have the required tools for asking questions of the NCBI database. To do this we will use the NCBI API: Entrez Direct and install it via the UNIX command line. 
 ```{bash, eval=FALSE}
@@ -42,7 +44,8 @@ Entrez.email = 'jflater@iastate.edu'
 ec_num = sys.argv[1].strip()
 #print ec_num
 #print 'E.C. '+ ec_num
-esearch_handle = Entrez.esearch(db='nucleotide', term='E.C. '+ec_num)
+esearch_handle = Entrez.esearch(db='nucleotide', term='EC '+ec_num)
+# When term='E.C. we get zero results, however, if term=EC it works
 entries = Entrez.read(esearch_handle)
 esearch_handle.close()
 
@@ -51,9 +54,7 @@ efetch_handle = Entrez.efetch(db='nucleotide', id=entries['IdList'], rettype='gb
 records = Entrez.parse(efetch_handle)
 
 # Now, we go through the records and look for a feature with name 'EC_number'
-missing = []
 for record in records:
-  try:
       for feature in record['GBSeq_feature-table']:
           for subfeature in feature['GBFeature_quals']:
               if (subfeature['GBQualifier_name'] == 'EC_number'   and
@@ -79,11 +80,8 @@ for record in records:
 
                     print('>GenBank Accession:{}'.format(accession))
                     print(seq.seq)
-  except ValueError: ## if whatever you are trying to do did not go through
-        missing.append(records.id) ## write the stuff to list "missing"
-print missing
-#fp.write('\n'.join(missing))
 efetch_handle.close()
+
 ```
 Now let's apply that script to our list of EC #'s by using the command line:
 ```{bash, eval=FALSE}
@@ -91,6 +89,16 @@ while read line;
   do python scripts/nucl_from_ec.py $line > "$line".txt;    
   done < ec_numbers.txt
 ```
+
+```{bash}
+cd Documents/COBS_CAZY
+head 3.2.1.37.txt 
+```
+
+
+
+
+
 This command line script will go through our list of EC numbers and retrieve the associated nucleotide sequences and output a file for each EC # with those sequences in fasta format. 
 ____
 Python script wasn't working. So we are using downloaded protien sequences to blast against NCBI 
@@ -100,14 +108,14 @@ _____
 To use hpcc:
 Lot's of disc space, temporary unlimited (3 months)
 
-ssh flaterj1@hpcc.msu.edu
+ssh *****@hpcc.msu.edu
 password:
 
 We are at the gateway, now connect to development node (dev-intell-16, it's newer)
 
 ssh dv-intell-16
 ~ is home directory, only 50 g and Jin can't see it.
-cd /mnt/scratch/flaterj1
+cd /mnt/scratch/*****
 empty big directory, temp unlimeted good for downloading big files for a short time
 now lets download db to that  ftp://ftp.ncbi.nlm.nih.gov
 refseq_protien.10.tar.gz.md5 and *.gz is what we want to put on HPCC
@@ -118,23 +126,23 @@ We want to work in a node, we need to submit a job by using qsub
 
 ```
 
-[flaterj1@dev-intel16 ~]$ cd /mnt/scratch/flaterj1
-[flaterj1@dev-intel16 flaterj1]$ ls
-[flaterj1@dev-intel16 flaterj1]$ mkdir COBS_CAZY
-[flaterj1@dev-intel16 flaterj1]$ cd COBS_CAZY/
-[flaterj1@dev-intel16 COBS_CAZY]$ emacs download.refseq.qsub
+[*****@dev-intel16 ~]$ cd /mnt/scratch/*****
+[*****@dev-intel16 *****]$ ls
+[*****@dev-intel16 *****]$ mkdir COBS_CAZY
+[*****@dev-intel16 *****]$ cd COBS_CAZY/
+[*****@dev-intel16 COBS_CAZY]$ emacs download.refseq.qsub
 
 [1]+  Stopped                 emacs download.refseq.qsub
-[flaterj1@dev-intel16 COBS_CAZY]$ ls
+[*****@dev-intel16 COBS_CAZY]$ ls
 download.refseq.qsub  download.refseq.qsub~
-[flaterj1@dev-intel16 COBS_CAZY]$ rm *~
-[flaterj1@dev-intel16 COBS_CAZY]$ ls
+[*****@dev-intel16 COBS_CAZY]$ rm *~
+[*****@dev-intel16 COBS_CAZY]$ ls
 download.refseq.qsub
-[flaterj1@dev-intel16 COBS_CAZY]$ qsub download.refseq.qsub
+[*****@dev-intel16 COBS_CAZY]$ qsub download.refseq.qsub
 37523906.mgr-04.i
-[flaterj1@dev-intel16 COBS_CAZY]$ ls
+[*****@dev-intel16 COBS_CAZY]$ ls
 download.refseq.qsub
-[flaterj1@dev-intel16 COBS_CAZY]$
+[*****@dev-intel16 COBS_CAZY]$
 
 .o is output, .e is error
 
@@ -154,4 +162,15 @@ module load git (to upload repository)
 git clone url
 once repository is uploaded then blastp
 
+submit blastp: qsub blastp.qsub
+
+#2016_12_02:09:06 AM, Noticed that we did not qsub blastp for EC *.86, let's make that script and submit the job. 
+```{bash, eval=FALSE}
+ssh *****@hpcc.msu.edu
+password:
+ssh dev-intel16
+cd /mnt/scratch/*****/COBS_CAZY
+ls
+
+```
 

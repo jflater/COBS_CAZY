@@ -5,23 +5,25 @@ Entrez.email = 'jflater@iastate.edu'
 
 # First, find entries that contain the E.C. number
 ec_num = sys.argv[1].strip()
-#print ec_num
-#print 'E.C. '+ ec_num
-esearch_handle = Entrez.esearch(db='nucleotide', term='E.C. '+ec_num)
+# Editing to only search for #, exclude "EC and E.C."
+esearch_handle = Entrez.esearch(db='protein', term="EC " + ec_num)
 entries = Entrez.read(esearch_handle)
+print entries
 esearch_handle.close()
 
+
 # Second, fetch these entries
-efetch_handle = Entrez.efetch(db='nucleotide', id=entries['IdList'], rettype='gb', retmode='xml') 
+efetch_handle = Entrez.efetch(db='protein', id=entries['IdList'], rettype='gb', retmode='xml') 
 records = Entrez.parse(efetch_handle)
 
 # Now, we go through the records and look for a feature with name 'EC_number'
 for record in records:
+      #print record
       for feature in record['GBSeq_feature-table']:
           for subfeature in feature['GBFeature_quals']:
+              #print subfeature['GBQualifier_name']
               if (subfeature['GBQualifier_name'] == 'EC_number'   and
                 subfeature['GBQualifier_value'] == ec_num):
-
                     # If we found it, we extract the seq's start and end
                     accession = record['GBSeq_primary-accession']
                     interval = feature['GBFeature_intervals'][0]
