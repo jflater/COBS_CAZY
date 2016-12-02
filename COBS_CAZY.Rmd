@@ -7,8 +7,18 @@ root: ../../../
 ------
 #COBS: A Background
 
-COBS is a field trial comparing biofuel systems
-------
+COBS is a field trial comparing biofuel systems and represents a unique opprotunity to utilize NGS in order to explore the distrubution of bacterail species associated with carbon cycleing and how they are distrubuted amongst the aggregate fractions in. Why do we care about agreggate fractions and the bacterial distrubution in each? We know that tillage and cropping systems have an effect on the distribution of aggregate sizes. We also know that bacterial species eveness is not consistant accross aggregate fractions. Let's explore these points further by looking into the distribution of bacteria with the potential for carbohydrate degredation. The results from this study may inform agricultural management decisions based on the desired outcome for carbon cycling. I.E. more or less tillage to drive the aggregate size distribution and therefore the microbial community. Perhaps we can store more carbon in the soil with proper management techniques that facilitate the growth of a desired aggregate class based on the funciton you wish to achieve in the ecosystem. 
+
+We can do this by quantifying the amount of bacteria that have genes associated with carbon degrading enzymes of intrest. These enzymes are: 
+
+  1. endoglucanase [EC:3.2.1.4]
+  2. pullulanase [EC:3.2.1.41]
+  3. 1,4-beta-cellobiosidase [EC:3.2.1.91]
+  4. beta-glucosidase [EC:3.2.1.21]
+  5. beta-D-xylosidase 4 [EC:3.2.1.37]
+  6. 6-phospho-beta-glucosidase [EC:3.2.1.86]
+
+![](images/AGGdist.png)
 First, let's confirm that we have the required tools for asking questions of the NCBI database. To do this we will use the NCBI API: Entrez Direct and install it via the UNIX command line. 
 ```{bash, eval=FALSE}
 pwd
@@ -92,33 +102,36 @@ while read line;
 
 ```{bash}
 cd Documents/COBS_CAZY
-head 3.2.1.37.txt 
+less 3.2.1.37.txt 
 ```
 
-
-
-
-
-This command line script will go through our list of EC numbers and retrieve the associated nucleotide sequences and output a file for each EC # with those sequences in fasta format. 
-____
-Python script wasn't working. So we are using downloaded protien sequences to blast against NCBI 
-Let's try an online server 
-mkdir temp_cazy
-_____
 To use hpcc:
 Lot's of disc space, temporary unlimited (3 months)
-
+```{bash}
 ssh *****@hpcc.msu.edu
 password:
-
-We are at the gateway, now connect to development node (dev-intell-16, it's newer)
-
-ssh dv-intell-16
-~ is home directory, only 50 g and Jin can't see it.
+#We are now at the gateway, we must connect to a development node
+ssh dv-intel16
+#Now we move to a scratch folder
 cd /mnt/scratch/*****
-empty big directory, temp unlimeted good for downloading big files for a short time
+```
+
+Now that we are in a space where we can download data and perform work, let's download the NCBI db
+```{bash}
+#Make a directory for this project
+mkdir COBS_CAZY
+cd COBS_CAZY/
+#now we create a program to downlaod the db
+emacs download.refseq.qsub
+```
+
 now lets download db to that  ftp://ftp.ncbi.nlm.nih.gov
 refseq_protien.10.tar.gz.md5 and *.gz is what we want to put on HPCC
+```{bash}
+pwd
+cd Documents/COBS_CAZY/scripts
+cat download.refseq.qsub
+```
 
 In HPC: move out of dev intel...everyone is using it. There are many more computers to choose from begind that...called nodes
 We want to work in a node, we need to submit a job by using qsub

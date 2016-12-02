@@ -1,0 +1,27 @@
+#!/bin/bash ~login
+
+### define resources needed:
+### walltime - how long you expec the job to run
+#PBS -l walltime=40:00:00
+
+### nodes:ppn - how many nodes & cores per node (ppn) that you require
+#PBS -l nodes=1:ppn=1
+
+### mem: amount of memory that the job will need
+#PBS -l mem=4gb
+
+#PBS -q main
+#PBS -M youremail@email.com
+#PBS -m your department
+
+### you can give your job a name for easier identification
+#PBS -N yourname
+
+### load module
+
+### Change directory
+cd /mnt/scratch/username/COBS_CAZY
+
+### call
+wget ftp://ftp.cbi.nlm.nih.gov/blast/db/refseq_protein.* -P resfeq_protein
+
