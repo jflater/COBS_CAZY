@@ -1,7 +1,7 @@
 import sys
 
 d = {}
-cutoff = sys.argv[2]
+cutoff = float(sys.argv[2])
 for line in open(sys.argv[1]):
     data = line.rstrip().split('\t')
     query = data[0]
