@@ -3,4 +3,8 @@ for x in *.blast; do python ../COBS_CAZY/best_hit_blast_idcut.py $x 94 > $x.best
 #run here: /mnt/scratch/flaterj1/COBS_CAZY/output.blast
 #then run count up
 
-python ../../path_to_the_script/count_up.py *.21.fa.blast.best
+python ../COBS_CAZY/count_up.py *.21.fa.blast.best
+python ../COBS_CAZY/count_up.py *.37.fa.blast.best
+python ../COBS_CAZY/count_up.py *.91.fa.blast.best
+#Do for each ec number
+#cp summary-count.csv summary_count_21.csv
