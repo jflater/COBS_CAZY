@@ -1,0 +1,4 @@
+cat command.blast.21.r1.sh | /mnt/home/flaterj1/parallel-20161122/src/pa\
+rallel
+
+for x in *.sh;do python make_qsub.py env.qsub "cat $x | /mnt/home/flaterj1/parallel-20161122/src/parallel" > $x.qsub;done

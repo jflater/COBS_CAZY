@@ -1,0 +1,1 @@
+for x in /mnt/research/germs/jin/cobs/round1_fasta/*.fasta; do echo "blastn -db /mnt/scratch/flaterj1/COBS_CAZY/ec_db/EC_3.2.1.21.fa.99.fa -query $x -evalue 1e-5 -out ${x##*/}.blast -outfmt 6"; done

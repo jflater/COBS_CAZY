@@ -1,0 +1,6 @@
+for x in *.blast; do python ../COBS_CAZY/best_hit_blast_idcut.py $x 94 > $x.besthit94; done
+
+#run here: /mnt/scratch/flaterj1/COBS_CAZY/output.blast
+#then run count up
+
+python ../../path_to_the_script/count_up.py *.21.fa.blast.best

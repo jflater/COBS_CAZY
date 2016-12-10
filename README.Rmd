@@ -7,18 +7,38 @@ root: ../../../
 ------
 #COBS: A Background
 
-COBS is a field trial comparing biofuel systems and represents a unique opprotunity to utilize NGS in order to explore the distrubution of bacterail species associated with carbon cycleing and how they are distrubuted amongst the aggregate fractions in. Why do we care about agreggate fractions and the bacterial distrubution in each? We know that tillage and cropping systems have an effect on the distribution of aggregate sizes. We also know that bacterial species eveness is not consistant accross aggregate fractions. Let's explore these points further by looking into the distribution of bacteria with the potential for carbohydrate degredation. The results from this study may inform agricultural management decisions based on the desired outcome for carbon cycling. I.E. more or less tillage to drive the aggregate size distribution and therefore the microbial community. Perhaps we can store more carbon in the soil with proper management techniques that facilitate the growth of a desired aggregate class based on the funciton you wish to achieve in the ecosystem. 
+The Comparison of Biofuels Systems (COBS) is a field trial and collaboration between Iowa State University and the University of Illinois. The COBS experiment seeks to compare the impacts of different biofuel production systems. Of particular interest is the impact of the prodcution system on carbon cycling and soil health. In order to investigate this impact, a unique soil sampling was performed in 2012, so that metagenomes could be assembled and used to explore the distribution of carbon cycling genes. 
+
+What made this soil sampling unique was the seperation of the soil into aggregate fraction, in a non-destructive maner. In short, the soil was sieved at 4 degrees c. using sieves that coorospoind to the aggregate fraction of interest. 
+
+Previous investigations into this data set have shown that there is a distribution/differences in bacterial communities accross aggregate fractions and croping systems. 
+![](images/COBScomposition.png)
+![](images/AGGdist.png)
+
+
+What is an aggregate?
+  Soil aggregates are groups of soil particles that bind to each other more strongly than to adjacent particles. The space between the aggregates   provide pore space for retention and exchange of air and water.
+
+What is a metagenome? 
+  A library constructed from the DNA extracted from all organisms in the soil. 
+  
+So we have a unique dataset that consists of all the DNA from soil aggregate fractions from the COBS experiment. In addition to the genomic data, we started with metadata that was not tidy.
+
+Our challenge was to use the metagenome libraries to construct abundance tables that quantify the abundance of bacterial species capable of performing a step in the decompostion of celluslose. In order to facilitate our analysis of these data in R, we had to tidy up the COBS metadata. The metadata consists of many chemical and physical characteristics of the soil samples from the cobs aggregate fractions. 
+
+For investigating the presence of ceullityic bacteria, we needed to generate a list of bacterial sequences associated with cellulose degredation. We did this by searching the NCBI database for amino acid sequences associated with 1 of 3 enzymes. The enzymes we are interested are all involved in the break down of cellulose in the soil. Once we have this list, we can compare the aggregate fractions for the abundance of cellulytic bacteria. 
 
 We can do this by quantifying the amount of bacteria that have genes associated with carbon degrading enzymes of intrest. These enzymes are: 
 
-  1. endoglucanase [EC:3.2.1.4]
-  2. pullulanase [EC:3.2.1.41]
-  3. 1,4-beta-cellobiosidase [EC:3.2.1.91]
-  4. beta-glucosidase [EC:3.2.1.21]
-  5. beta-D-xylosidase 4 [EC:3.2.1.37]
-  6. 6-phospho-beta-glucosidase [EC:3.2.1.86]
+  1. (BG) beta-glucosidase [EC:3.2.1.21] is an Endocellulase
+  2. (BX) beta-D-xylosidase 4 [EC:3.2.1.37] is an Exocellulase
+  3. (CB) 1,4-beta-cellobiosidase [EC:3.2.1.91] is a Cellobiase
+  
+Together these thre enzymes can convert a cellulose crystal to glucose molecules.  
 
-![](images/AGGdist.png)
+![](images/Types_of_Cellulase2.png)
+
+###Stuff below this line should be put into the appendix, not a part of the actual presentation
 First, let's confirm that we have the required tools for asking questions of the NCBI database. To do this we will use the NCBI API: Entrez Direct and install it via the UNIX command line. 
 ```{bash, eval=FALSE}
 pwd
